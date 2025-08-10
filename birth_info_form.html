@@ -304,11 +304,7 @@
         </form>
         </div>
 
-    <!-- Load theo thứ tự: Model Manager -> API Key Manager -> TuVi Service -> TuVi Processor -->
-    <script src="modelManager.js?v=1.6"></script>
-    <script src="apiKeyManager.js?v=1.6"></script>
-    <script src="tuviGeminiService.js?v=1.6"></script>
-    <script src="tuvi_processor.js?v=1.6"></script>
+    <!-- Scripts sẽ được load động theo thứ tự -->
            <script>
                // Tạo ngôi sao lấp lánh
         function createStars() {
@@ -328,6 +324,62 @@
 
         // Khởi tạo TuViProcessor
         let tuViProcessor = null;
+        let scriptsLoaded = false;
+
+        // Load scripts theo thứ tự
+        async function loadScripts() {
+            if (scriptsLoaded) return true;
+            
+            return new Promise((resolve, reject) => {
+                console.log('🔄 Bắt đầu load scripts...');
+                
+                // Load ModelManager
+                const script1 = document.createElement('script');
+                script1.src = 'modelManager.js?v=1.7';
+                script1.onload = function() {
+                    console.log('✅ modelManager.js đã load');
+                    
+                    // Load API Key Manager
+                    const script2 = document.createElement('script');
+                    script2.src = 'apiKeyManager.js?v=1.7';
+                    script2.onload = function() {
+                        console.log('✅ apiKeyManager.js đã load');
+                        
+                        // Load TuVi Service
+                        const script3 = document.createElement('script');
+                        script3.src = 'tuviGeminiService.js?v=1.7';
+                        script3.onload = function() {
+                            console.log('✅ tuviGeminiService.js đã load');
+                            
+                            // Load TuVi Processor
+                            const script4 = document.createElement('script');
+                            script4.src = 'tuvi_processor.js?v=1.7';
+                            script4.onload = function() {
+                                console.log('✅ tuvi_processor.js đã load');
+                                scriptsLoaded = true;
+                                resolve(true);
+                            };
+                            script4.onerror = function() {
+                                reject(new Error('Không thể load tuvi_processor.js'));
+                            };
+                            document.head.appendChild(script4);
+                        };
+                        script3.onerror = function() {
+                            reject(new Error('Không thể load tuviGeminiService.js'));
+                        };
+                        document.head.appendChild(script3);
+                    };
+                    script2.onerror = function() {
+                        reject(new Error('Không thể load apiKeyManager.js'));
+                    };
+                    document.head.appendChild(script2);
+                };
+                script1.onerror = function() {
+                    reject(new Error('Không thể load modelManager.js'));
+                };
+                document.head.appendChild(script1);
+            });
+        }
 
         // Kiểm tra dependencies trước khi xử lý form
         function checkDependencies() {
@@ -371,7 +423,12 @@
             hideError();
             
             try {
-                // Kiểm tra dependencies trước
+                // Load scripts trước nếu chưa load
+                if (!scriptsLoaded) {
+                    await loadScripts();
+                }
+                
+                // Kiểm tra dependencies sau khi load
                 checkDependencies();
                 
                 // Khởi tạo TuViProcessor nếu chưa có
@@ -399,8 +456,16 @@
             }
         });
 
-        // Khởi tạo ngôi sao khi trang load
-        window.addEventListener('load', createStars);
+        // Khởi tạo ngôi sao và load scripts khi trang load
+        window.addEventListener('load', async function() {
+            createStars();
+            try {
+                await loadScripts();
+                console.log('✅ Tất cả scripts đã được load thành công');
+            } catch (error) {
+                console.error('❌ Lỗi load scripts:', error);
+            }
+        });
 
         // Thêm hiệu ứng hover cho các input
         document.querySelectorAll('.form-input').forEach(input => {
