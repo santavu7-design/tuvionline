@@ -9,8 +9,28 @@ class TuViProcessor {
             throw new Error('ModelManager chưa được load. Kiểm tra thứ tự load script files.');
         }
         this.modelManager = window.modelManager;
-        this.tuviService = new TuViGeminiService();
-        this.database = new TuViDatabase();
+        // Lazy instantiate để tránh race condition
+        this._tuviService = null;
+        this._database = null;
+    }
+    
+    // Getter cho tuviService - lazy instantiate
+    get tuviService() {
+        if (!this._tuviService) {
+            if (!window.TuViGeminiService) {
+                throw new Error('TuViGeminiService chưa được load. Kiểm tra thứ tự load script files.');
+            }
+            this._tuviService = new TuViGeminiService();
+        }
+        return this._tuviService;
+    }
+    
+    // Getter cho database - lazy instantiate
+    get database() {
+        if (!this._database) {
+            this._database = new TuViDatabase();
+        }
+        return this._database;
     }
 
     /**
