@@ -1,102 +1,97 @@
-# TV_Final - Ứng dụng Tử Vi sử dụng Gemini Pro
+# Tu Vi Application - Ứng dụng Tử Vi với Gemini AI
 
-## Mô tả
-Ứng dụng web Tử Vi Việt Nam sử dụng AI Gemini Pro để phân tích và hiển thị lá số tử vi dựa trên thông tin sinh nhật của người dùng.
-
-## Cấu trúc dự án
-
-### File chính
-- `birth_info_form.html` - Giao diện nhập thông tin sinh nhật với thiết kế huyền bí
-- `tuviGeminiService.js` - Service xử lý API Gemini Pro và quản lý dữ liệu
-- `lasotuvi.html` - Trang hiển thị kết quả tử vi với biểu đồ vòng cung và 12 cung chi tiết
-- `call_gemini_api.html` - Trang test riêng biệt để gọi Gemini Pro API
-
-### Thư mục Old/
-Chứa các file cũ không còn sử dụng để tham khảo.
+Ứng dụng web tạo lá số tử vi sử dụng Google Gemini AI để phân tích và tạo nội dung chi tiết.
 
 ## Tính năng chính
 
-### 1. Nhập thông tin sinh nhật (`birth_info_form.html`)
-- Giao diện huyền bí với hiệu ứng ngôi sao
-- Thu thập: họ tên, giới tính, ngày giờ sinh, nơi sinh
-- Tự động gọi Gemini Pro API và lưu kết quả
-- Chuyển hướng tự động đến trang kết quả
+- **Nhập thông tin sinh**: Thu thập ngày, tháng, năm, giờ sinh của người dùng
+- **Tích hợp Gemini AI**: Sử dụng Google Gemini 2.5 Pro để tạo nội dung tử vi
+- **Quản lý API Keys**: Hệ thống quản lý và xoay vòng nhiều API keys
+- **Model Manager**: Quản lý và chuyển đổi giữa các model Gemini khác nhau
+- **Hiển thị lá số**: Giao diện đẹp mắt để hiển thị kết quả tử vi
+- **Lưu trữ local**: Sử dụng localStorage để lưu trữ dữ liệu
 
-### 2. Service Gemini Pro (`tuviGeminiService.js`)
-- **API Integration**: Gọi Gemini Pro API với prompt được tối ưu
-- **Data Management**: Lưu/đọc/xóa thông tin sinh nhật và kết quả API
-- **Response Parsing**: Chuyển đổi text response thành cấu trúc dữ liệu JavaScript
-- **localStorage Integration**: Lưu trữ kết quả markdown để các component khác sử dụng
+## Cấu trúc dự án
 
-#### Các method chính:
-- `callGeminiAPI(birthInfo, apiKey)` - Gọi API và lưu kết quả
-- `parseGeminiResult(markdownText)` - Parse response từ Gemini Pro
-- `getMarkdownResult()` - Lấy kết quả từ localStorage
-- `saveBirthInfo(birthInfo)` - Lưu thông tin sinh nhật
-
-### 3. Hiển thị kết quả (`lasotuvi.html`)
-- **Biểu đồ vòng cung**: Hiển thị 12 cung tử vi theo hình tròn
-- **Grid 12 cung**: Hiển thị chi tiết từng cung theo layout 3x4
-- **Responsive Design**: Tối ưu cho mobile và desktop
-- **Data Source**: Đọc dữ liệu từ localStorage (kết quả Gemini Pro API)
-
-### 4. Test API (`call_gemini_api.html`)
-- Giao diện độc lập để test Gemini Pro API
-- Lưu kết quả markdown vào localStorage
-- Tải xuống file .md để kiểm tra
-
-## Quy trình hoạt động
-
-1. **Nhập thông tin**: Người dùng nhập thông tin sinh nhật tại `birth_info_form.html`
-2. **Gọi API**: Service tự động gọi Gemini Pro API với prompt được tối ưu
-3. **Lưu kết quả**: Response markdown được lưu vào localStorage
-4. **Hiển thị**: `lasotuvi.html` đọc dữ liệu từ localStorage và hiển thị kết quả
-5. **Tương tác**: Người dùng có thể xem chi tiết từng cung và biểu đồ vòng cung
-
-## Cài đặt và sử dụng
-
-### 1. Cài đặt API Key
-Cập nhật `API_KEY` trong `tuviGeminiService.js`:
-```javascript
-this.API_KEY = 'YOUR_GEMINI_PRO_API_KEY_HERE';
+```
+TV_Final/
+├── birth_info_form.html      # Form nhập thông tin sinh
+├── lasotuvi.html            # Hiển thị lá số tử vi
+├── modelManager.js          # Quản lý các model Gemini
+├── apiKeyManager.js         # Quản lý API keys
+├── tuviGeminiService.js     # Service gọi Gemini API
+├── tuvi_processor.js        # Xử lý logic chính
+├── js/                      # Thư mục JavaScript
+├── styles/                  # CSS styles
+└── README.md               # Tài liệu dự án
 ```
 
-### 2. Chạy ứng dụng
-- Mở `birth_info_form.html` trong trình duyệt
-- Nhập thông tin sinh nhật
-- Hệ thống sẽ tự động gọi API và chuyển đến trang kết quả
+## Cách sử dụng
 
-### 3. Test API riêng biệt
-- Mở `call_gemini_api.html` để test API độc lập
-- Kết quả được lưu vào localStorage để `lasotuvi.html` sử dụng
+1. **Mở file `birth_info_form.html`** trong trình duyệt
+2. **Nhập thông tin sinh** (ngày, tháng, năm, giờ)
+3. **Nhấn "Tạo Lá Số Tử Vi"**
+4. **Chờ Gemini AI xử lý** và tạo nội dung
+5. **Xem kết quả** trong `lasotuvi.html`
 
-## Cấu trúc dữ liệu
+## Cài đặt API Keys
 
-### Input (birthInfo)
+1. Lấy API key từ [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Thêm vào `apiKeyManager.js`:
+
 ```javascript
-{
-    fullName: "Nguyễn Văn A",
-    gender: "Nam",
-    birthDate: "1990-01-01",
-    birthTime: "12:00",
-    birthplace: "Hà Nội"
-}
+const API_KEYS = [
+    'your-api-key-1',
+    'your-api-key-2',
+    // Thêm nhiều keys để xoay vòng
+];
 ```
-
-### Output (Gemini Pro Response)
-- Thông tin cơ bản: họ tên, giới tính, ngày sinh, nơi sinh
-- 12 cung tử vi: mệnh, phụ mẫu, phúc đức, điền trạch, quan lộc, nô bộc, thiên di, tật ách, tài bạch, tử tức, thê thiếp, huynh đệ
-- Mỗi cung chứa: địa chi, chính tinh, phụ tinh, vòng tràng sinh, trạng thái thân
 
 ## Công nghệ sử dụng
-- **Frontend**: HTML5, CSS3, JavaScript ES6+
-- **API**: Google Gemini Pro (Generative AI)
-- **Storage**: localStorage (client-side)
-- **Design**: Responsive design với CSS Grid và Flexbox
-- **Animation**: CSS transitions và hover effects
 
-## Lưu ý
-- API key Gemini Pro cần được cấu hình trước khi sử dụng
-- Dữ liệu được lưu trong localStorage của trình duyệt
-- Ứng dụng hoạt động offline sau khi có dữ liệu từ API
-- Prompt được tối ưu để tạo ra dữ liệu tử vi mô phỏng hợp lý
+- **Frontend**: HTML5, CSS3, JavaScript ES6+
+- **AI Service**: Google Gemini 2.5 Pro API
+- **Storage**: LocalStorage
+- **UI Framework**: Custom CSS với gradient và animation
+
+## Model Gemini được hỗ trợ
+
+- `gemini-2.5-pro` (chính)
+- `gemini-2.0-pro-exp`
+- `gemini-2.0-pro`
+- `gemini-2.0-flash-exp`
+- `gemini-2.0-flash`
+
+## Tính năng kỹ thuật
+
+- **Retry Logic**: Tự động thử lại khi API call thất bại
+- **Timeout Management**: Xử lý timeout cho các request
+- **Cache Busting**: Đảm bảo load script mới nhất
+- **Error Handling**: Xử lý lỗi chi tiết với logging
+- **Responsive Design**: Giao diện tương thích mọi thiết bị
+
+## Đóng góp
+
+Để đóng góp vào dự án:
+
+1. Fork repository
+2. Tạo feature branch
+3. Commit changes
+4. Push to branch
+5. Tạo Pull Request
+
+## License
+
+MIT License - Xem file LICENSE để biết thêm chi tiết.
+
+## Hỗ trợ
+
+Nếu gặp vấn đề, vui lòng:
+1. Kiểm tra Console (F12) để xem lỗi
+2. Đảm bảo API keys hợp lệ
+3. Kiểm tra kết nối internet
+4. Tạo issue trên GitHub
+
+---
+
+**Lưu ý**: Ứng dụng này chỉ mang tính chất tham khảo và giải trí. Kết quả tử vi được tạo bởi AI và không thay thế cho các phương pháp truyền thống.
