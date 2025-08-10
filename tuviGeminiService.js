@@ -5,18 +5,35 @@
 
 class TuViGeminiService {
     constructor() {
-        // Kiểm tra dependencies
-        if (!window.modelManager) {
-            throw new Error('ModelManager chưa được load. Kiểm tra thứ tự load script files.');
-        }
-        if (!window.apiKeyManager) {
-            throw new Error('ApiKeyManager chưa được load. Kiểm tra thứ tự load script files.');
-        }
+        // Lazy instantiate để tránh race condition
+        this._modelManager = null;
+        this._keyManager = null;
         
-        // Sử dụng Model Manager để quản lý models và keys
-        this.modelManager = window.modelManager;
-        // Sử dụng API Key Manager để quản lý key
-        this.keyManager = window.apiKeyManager;
+        // Getter cho modelManager - lazy instantiate
+        Object.defineProperty(this, 'modelManager', {
+            get: function() {
+                if (!this._modelManager) {
+                    if (!window.modelManager) {
+                        throw new Error('ModelManager chưa được load. Kiểm tra thứ tự load script files.');
+                    }
+                    this._modelManager = window.modelManager;
+                }
+                return this._modelManager;
+            }
+        });
+        
+        // Getter cho keyManager - lazy instantiate
+        Object.defineProperty(this, 'keyManager', {
+            get: function() {
+                if (!this._keyManager) {
+                    if (!window.apiKeyManager) {
+                        throw new Error('ApiKeyManager chưa được load. Kiểm tra thứ tự load script files.');
+                    }
+                    this._keyManager = window.apiKeyManager;
+                }
+                return this._keyManager;
+            }
+        });
         
         // Prompt template cho Gemini
         this.PROMPT_TEMPLATE = `Bạn là một chuyên gia tử vi học Việt Nam có kinh nghiệm sâu rộng. Hãy tạo một lá số tử vi chi tiết và chính xác cho người dùng dựa trên thông tin sau:

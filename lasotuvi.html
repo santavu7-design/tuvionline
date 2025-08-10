@@ -541,9 +541,48 @@
         <a href="birth_info_form.html" class="back-btn">← Quay lại nhập thông tin</a>
     </div>
 
-    <!-- Chỉ load TuVi Service để parse dữ liệu từ file .md -->
-    <script src="tuviGeminiService.js"></script>
+    <!-- Load scripts theo thứ tự để đảm bảo dependencies -->
     <script>
+        // Load scripts theo thứ tự
+        async function loadScripts() {
+            return new Promise((resolve, reject) => {
+                console.log('🔄 Bắt đầu load scripts cho lasotuvi.html...');
+                
+                // Load ModelManager
+                const script1 = document.createElement('script');
+                script1.src = 'modelManager.js?v=1.7';
+                script1.onload = function() {
+                    console.log('✅ modelManager.js đã load');
+                    
+                    // Load API Key Manager
+                    const script2 = document.createElement('script');
+                    script2.src = 'apiKeyManager.js?v=1.7';
+                    script2.onload = function() {
+                        console.log('✅ apiKeyManager.js đã load');
+                        
+                        // Load TuVi Service
+                        const script3 = document.createElement('script');
+                        script3.src = 'tuviGeminiService.js?v=1.7';
+                        script3.onload = function() {
+                            console.log('✅ tuviGeminiService.js đã load');
+                            resolve(true);
+                        };
+                        script3.onerror = function() {
+                            reject(new Error('Không thể load tuviGeminiService.js'));
+                        };
+                        document.head.appendChild(script3);
+                    };
+                    script2.onerror = function() {
+                        reject(new Error('Không thể load apiKeyManager.js'));
+                    };
+                    document.head.appendChild(script2);
+                };
+                script1.onerror = function() {
+                    reject(new Error('Không thể load modelManager.js'));
+                };
+                document.head.appendChild(script1);
+            });
+        }
         // Hiển thị nội dung tử vi
         function displayTuViContent(data) {
             // Hiển thị thông tin cơ bản
@@ -703,6 +742,10 @@
         document.addEventListener('DOMContentLoaded', async function() {
             try {
                 console.log('Bắt đầu tải dữ liệu từ localStorage...');
+                
+                // Load scripts trước
+                await loadScripts();
+                console.log('✅ Tất cả scripts đã được load thành công');
                 
                 // Đọc dữ liệu từ localStorage (nơi TuViProcessor đã lưu)
                 const markdownData = localStorage.getItem('current_tuvi_result');
