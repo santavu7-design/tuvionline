@@ -266,37 +266,37 @@
         <form class="form-container" id="birthForm">
             <div class="form-group">
                 <label class="form-label">Họ và tên</label>
-                <input type="text" class="form-input" id="fullName" placeholder="Nhập họ và tên đầy đủ" required>
+                <input type="text" class="form-input" id="fullName" placeholder="Nhập họ và tên đầy đủ" value="Hoàng Anh" required>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Ngày sinh</label>
-                <input type="date" class="form-input" id="birthDate" required>
+                <input type="date" class="form-input" id="birthDate" value="1990-11-19" required>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Giờ sinh</label>
-                <input type="time" class="form-input" id="birthTime" required>
+                <input type="time" class="form-input" id="birthTime" value="08:30" required>
             </div>
 
-                               <div class="form-group">
-                       <label class="form-label">Nơi sinh</label>
-                       <input type="text" class="form-input" id="birthplace" placeholder="Nhập nơi sinh (tỉnh/thành phố)" required>
-                   </div>
+            <div class="form-group">
+                <label class="form-label">Nơi sinh</label>
+                <input type="text" class="form-input" id="birthplace" placeholder="Nhập nơi sinh (tỉnh/thành phố)" value="Hà Nội" required>
+            </div>
 
-                   <div class="form-group">
-                       <label class="form-label">Giới tính</label>
-                       <div class="gender-group">
-                           <div class="gender-option">
-                               <input type="radio" id="male" name="gender" value="Nam" required>
-                               <label for="male">Nam</label>
-                           </div>
-                           <div class="gender-option">
-                               <input type="radio" id="female" name="gender" value="Nữ">
-                               <label for="female">Nữ</label>
-                           </div>
-                       </div>
-                   </div>
+            <div class="form-group">
+                <label class="form-label">Giới tính</label>
+                <div class="gender-group">
+                    <div class="gender-option">
+                        <input type="radio" id="male" name="gender" value="Nam" checked required>
+                        <label for="male">Nam</label>
+                    </div>
+                    <div class="gender-option">
+                        <input type="radio" id="female" name="gender" value="Nữ">
+                        <label for="female">Nữ</label>
+                    </div>
+                </div>
+            </div>
 
             <button type="submit" class="submit-btn">
                 ✨ Xem Tử Vi ✨
