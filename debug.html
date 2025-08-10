@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Tu Vi</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Debug Tu Vi</h1>
+    
+    <button onclick="testParse()">Test Parse</button>
+    <button onclick="testFetch()">Test Fetch</button>
+    <button onclick="testDisplay()">Test Display</button>
+    
+    <div id="status" class="status info" style="display: none;"></div>
+    <div id="output"></div>
+    
+    <script>
+        // Copy functions from lasotuvi.html
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.display = 'block';
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+            console.log(`Status [${type}]:`, message);
+        }
+        
+        function parseMarkdownToData(markdownText) {
+            console.log('Parsing markdown:', markdownText.substring(0, 100) + '...');
+            
+            const data = {
+                cungTuVi: {}
+            };
+            
+            const lines = markdownText.split('\n');
+            let currentCung = '';
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (!line) continue;
+                
+                if (line.startsWith('## ')) {
+                    currentCung = line.substring(3).trim();
+                    if (!data.cungTuVi[currentCung]) {
+                        data.cungTuVi[currentCung] = {
+                            diaChi: '',
+                            chinhTinh: '',
+                            phuTinhTot: '',
+                            phuTinhXau: '',
+                            phuTinhTrungBinh: '',
+                            vongTrangSinh: '',
+                            isThan: false
+                        };
+                    }
+                }
+                
+                if (line.includes('ho_ten:')) {
+                    data.hoTen = line.split(':')[1]?.trim() || '';
+                } else if (line.includes('gioi_tinh:')) {
+                    data.gioiTinh = line.split(':')[1]?.trim() || '';
+                } else if (line.includes('duong_lich:')) {
+                    data.duongLich = line.split(':')[1]?.trim() || '';
+                } else if (line.includes('am_lich:')) {
+                    data.amLich = line.split(':')[1]?.trim() || '';
+                }
+                
+                if (currentCung && data.cungTuVi[currentCung]) {
+                    const cung = data.cungTuVi[currentCung];
+                    if (line.includes('dia_chi:')) {
+                        cung.diaChi = line.split(':')[1]?.trim() || '';
+                    } else if (line.includes('chinh_tinh:')) {
+                        cung.chinhTinh = line.split(':')[1]?.trim() || '';
+                    }
+                }
+            }
+            
+            console.log('Parsed data:', data);
+            return data;
+        }
+        
+        async function testFetch() {
+            try {
+                showStatus('Đang test fetch...', 'info');
+                const response = await fetch('sample_gemini_response.md');
+                if (response.ok) {
+                    const text = await response.text();
+                    showStatus(`✅ Fetch thành công! Size: ${text.length} chars`, 'success');
+                    document.getElementById('output').innerHTML = `<pre>${text.substring(0, 500)}...</pre>`;
+                } else {
+                    showStatus(`❌ HTTP Error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Fetch error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testParse() {
+            const sampleMd = `# Test
+ho_ten: Nguyễn Văn A
+gioi_tinh: Nam
+## mệnh
+dia_chi: Tý
+chinh_tinh: Thiên Cơ`;
+            
+            const result = parseMarkdownToData(sampleMd);
+            showStatus('✅ Parse test thành công!', 'success');
+            document.getElementById('output').innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+        
+        function testDisplay() {
+            const testData = {
+                hoTen: 'Test User',
+                gioiTinh: 'Nam',
+                cungTuVi: {
+                    'mệnh': {
+                        diaChi: 'Tý',
+                        chinhTinh: 'Thiên Cơ'
+                    }
+                }
+            };
+            
+            showStatus('✅ Display test thành công!', 'success');
+            document.getElementById('output').innerHTML = `<pre>${JSON.stringify(testData, null, 2)}</pre>`;
+        }
+    </script>
+</body>
+</html>

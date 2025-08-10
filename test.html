@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Server</title>
+</head>
+<body>
+    <h1>Test Server</h1>
+    <button onclick="testFetch()">Test Fetch</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testFetch() {
+            try {
+                document.getElementById('result').innerHTML = 'Đang test...';
+                const response = await fetch('sample_gemini_response.md');
+                if (response.ok) {
+                    const text = await response.text();
+                    document.getElementById('result').innerHTML = `✅ Success! File size: ${text.length} chars<br>First line: ${text.split('\n')[0]}`;
+                } else {
+                    document.getElementById('result').innerHTML = `❌ HTTP Error: ${response.status}`;
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

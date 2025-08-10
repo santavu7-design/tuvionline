@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kiểm tra tình trạng</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Kiểm tra tình trạng Tu Vi App</h1>
+    
+    <button onclick="checkServer()">1. Kiểm tra Server</button>
+    <button onclick="checkFile()">2. Kiểm tra File MD</button>
+    <button onclick="testFetch()">3. Test Fetch</button>
+    <button onclick="testParse()">4. Test Parse</button>
+    <button onclick="fullTest()">5. Test Toàn Bộ</button>
+    
+    <div id="results"></div>
+
+    <script>
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            document.getElementById('results').appendChild(div);
+        }
+
+        async function checkServer() {
+            try {
+                const response = await fetch(window.location.href);
+                if (response.ok) {
+                    addResult('✅ Server đang chạy bình thường', 'success');
+                } else {
+                    addResult('❌ Server có vấn đề: ' + response.status, 'error');
+                }
+            } catch (error) {
+                addResult('❌ Không thể kết nối server: ' + error.message, 'error');
+            }
+        }
+
+        async function checkFile() {
+            try {
+                const response = await fetch('sample_gemini_response.md', { method: 'HEAD' });
+                if (response.ok) {
+                    addResult('✅ File sample_gemini_response.md tồn tại', 'success');
+                } else {
+                    addResult('❌ File không tồn tại: ' + response.status, 'error');
+                }
+            } catch (error) {
+                addResult('❌ Lỗi kiểm tra file: ' + error.message, 'error');
+            }
+        }
+
+        async function testFetch() {
+            try {
+                addResult('🔄 Đang tải file markdown...', 'info');
+                const response = await fetch('sample_gemini_response.md');
+                if (response.ok) {
+                    const text = await response.text();
+                    addResult(`✅ Tải file thành công! Kích thước: ${text.length} ký tự`, 'success');
+                    addResult(`📄 Dòng đầu: "${text.split('\\n')[0]}"`, 'info');
+                } else {
+                    addResult('❌ Lỗi tải file: ' + response.status, 'error');
+                }
+            } catch (error) {
+                addResult('❌ Lỗi fetch: ' + error.message, 'error');
+            }
+        }
+
+        function parseMarkdownToData(markdownText) {
+            const data = { cungTuVi: {} };
+            const lines = markdownText.split('\\n');
+            let currentCung = '';
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (!line) continue;
+                
+                if (line.startsWith('## ')) {
+                    currentCung = line.substring(3).trim();
+                    data.cungTuVi[currentCung] = {
+                        diaChi: '', chinhTinh: '', phuTinhTot: '', phuTinhXau: '',
+                        phuTinhTrungBinh: '', vongTrangSinh: '', isThan: false
+                    };
+                }
+                
+                if (line.includes('ho_ten:')) {
+                    data.hoTen = line.split(':')[1]?.trim() || '';
+                } else if (line.includes('gioi_tinh:')) {
+                    data.gioiTinh = line.split(':')[1]?.trim() || '';
+                }
+                
+                if (currentCung && data.cungTuVi[currentCung]) {
+                    const cung = data.cungTuVi[currentCung];
+                    if (line.includes('dia_chi:')) {
+                        cung.diaChi = line.split(':')[1]?.trim() || '';
+                    } else if (line.includes('chinh_tinh:')) {
+                        cung.chinhTinh = line.split(':')[1]?.trim() || '';
+                    }
+                }
+            }
+            return data;
+        }
+
+        async function testParse() {
+            try {
+                addResult('🔄 Đang test parse markdown...', 'info');
+                const response = await fetch('sample_gemini_response.md');
+                if (response.ok) {
+                    const text = await response.text();
+                    const parsed = parseMarkdownToData(text);
+                    addResult(`✅ Parse thành công! Tìm thấy ${Object.keys(parsed.cungTuVi).length} cung`, 'success');
+                    addResult(`👤 Họ tên: ${parsed.hoTen || 'N/A'}`, 'info');
+                    addResult(`🎯 Cung đầu tiên: ${Object.keys(parsed.cungTuVi)[0] || 'N/A'}`, 'info');
+                } else {
+                    addResult('❌ Không thể tải file để parse', 'error');
+                }
+            } catch (error) {
+                addResult('❌ Lỗi parse: ' + error.message, 'error');
+            }
+        }
+
+        async function fullTest() {
+            addResult('🚀 Bắt đầu test toàn bộ...', 'info');
+            await checkServer();
+            await new Promise(r => setTimeout(r, 500));
+            await checkFile();
+            await new Promise(r => setTimeout(r, 500));
+            await testFetch();
+            await new Promise(r => setTimeout(r, 500));
+            await testParse();
+            addResult('✅ Hoàn thành test toàn bộ!', 'success');
+        }
+    </script>
+</body>
+</html>
