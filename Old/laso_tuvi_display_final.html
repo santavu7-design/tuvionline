@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lá Số Tử Vi - Hiển Thị</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+            font-size: 0.9em;
+        }
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result-section {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        .result-section.show {
+            display: block;
+        }
+        .cung-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .cung-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.2s ease;
+        }
+        .cung-card:hover {
+            transform: translateY(-3px);
+        }
+        .cung-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .cung-info {
+            display: grid;
+            gap: 8px;
+        }
+        .cung-info div {
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+        .cung-info strong {
+            color: #495057;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin: 10px 0;
+        }
+        .download-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            margin-top: 20px;
+        }
+        .test-btn {
+            background: linear-gradient(45deg, #ffc107, #fd7e14);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔮 Lá Số Tử Vi</h1>
+            <p>Tạo và hiển thị lá số tử vi với AI Gemini</p>
+        </div>
+
+        <div class="form-section">
+            <h2>📝 Thông Tin Cá Nhân</h2>
+            <form id="lasoForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="user-name">Họ và Tên:</label>
+                        <input type="text" id="user-name" value="Hoàng Anh" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-gender">Giới Tính:</label>
+                        <select id="user-gender" required>
+                            <option value="Nam" selected>Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-birthdate">Ngày Sinh (dd/mm/yy):</label>
+                        <input type="text" id="user-birthdate" value="19/11/90" placeholder="dd/mm/yy" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-birthtime">Giờ Sinh (24h):</label>
+                        <input type="time" id="user-birthtime" value="08:30" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-birthplace">Nơi Sinh:</label>
+                        <input type="text" id="user-birthplace" value="Hà Nội" required>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <button type="submit" class="btn">🎯 Tạo Lá Số Tử Vi</button>
+                    <button type="button" class="btn test-btn" onclick="testAPI()">🧪 Test API</button>
+                    <button type="button" class="btn" onclick="generateMockData()">🎲 Dữ Liệu Giả</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="message" style="display: none;"></div>
+
+        <div id="result" class="result-section">
+            <h2>📊 Kết Quả Lá Số Tử Vi</h2>
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Đang tạo lá số tử vi...</p>
+            </div>
+            <div id="content"></div>
+            <button class="btn download-btn" onclick="downloadMarkdown()" style="display: none;">📥 Tải Xuống MD</button>
+        </div>
+    </div>
+
+    <script>
+        // API Keys
+        const API_KEYS = [
+            'AIzaSyAlst5yeNQebSyfxUMRY6yDK7lvwKMUzLM',
+            'AIzaSyCnj2qJX2fX2AjGRMLzXI5kFak8-SdTe6Q',
+            'AIzaSyAxs5Y8I2wBENa3ZaE45iK5jxdvWpn-Pjs'
+        ];
+
+        // Models
+        const GEMINI_MODELS = [
+            'gemini-2.5-pro',
+            'gemini-2.5-flash',
+            'gemini-2.5-flash-lite',
+            'gemini-1.5-pro',
+            'gemini-1.5-flash',
+            'gemini-pro'
+        ];
+
+        let currentKeyIndex = 0;
+        let currentData = null;
+
+        // Validate date format
+        function validateDateFormat(dateString) {
+            const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{2})$/;
+            const match = dateString.match(dateRegex);
+            
+            if (!match) return false;
+            
+            const day = parseInt(match[1]);
+            const month = parseInt(match[2]);
+            const year = parseInt(match[3]);
+            const fullYear = year < 50 ? 2000 + year : 1900 + year;
+            
+            const date = new Date(fullYear, month - 1, day);
+            return date.getDate() === day && 
+                   date.getMonth() === month - 1 && 
+                   date.getFullYear() === fullYear;
+        }
+
+        // Convert date format
+        function convertDateFormat(dateString) {
+            const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{2})$/;
+            const match = dateString.match(dateRegex);
+            
+            if (!match) return null;
+            
+            const day = match[1].padStart(2, '0');
+            const month = match[2].padStart(2, '0');
+            const year = parseInt(match[3]);
+            const fullYear = year < 50 ? 2000 + year : 1900 + year;
+            
+            return `${fullYear}-${month}-${day}`;
+        }
+
+        // Show message
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = type;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Validate Markdown format
+        function validateMarkdownFormat(text) {
+            const requiredFields = [
+                'ho_ten:', 'gioi_tinh:', 'duong_lich:', 'am_lich:', 
+                'noi_sinh:', 'ban_menh:', 'cuc:', 'am_duong:', 'chu_menh:', 'chu_than:'
+            ];
+            
+            const requiredSections = [
+                '## MỆNH', '## PHỤ MẪU', '## PHÚC ĐỨC', '## ĐIỀN TRẠCH',
+                '## QUAN LỘC', '## NÔ BỘC', '## THIÊN DI', '## TẬT ÁCH',
+                '## TÀI BẠCH', '## TỬ TỨC', '## THÊ THIẾP', '## HUYNH ĐỆ'
+            ];
+
+            for (const field of requiredFields) {
+                if (!text.includes(field)) {
+                    console.error(`Thiếu trường: ${field}`);
+                    return false;
+                }
+            }
+
+            for (const section of requiredSections) {
+                if (!text.includes(section)) {
+                    console.error(`Thiếu section: ${section}`);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Generate horoscope
+        async function generateLaso(userData) {
+            const birthdateParts = userData.birthdate.split('/');
+            const day = birthdateParts[0];
+            const month = birthdateParts[1];
+            const year = birthdateParts[2];
+            const fullYear = year.length === 2 ? (parseInt(year) < 50 ? '20' + year : '19' + year) : year;
+
+            const prompt = `Bạn là một chuyên gia tử vi học Việt Nam. Hãy tạo một lá số tử vi mô phỏng cho người dùng dựa trên thông tin sau:
+
+Họ và Tên: ${userData.name}
+Giới Tính: ${userData.gender}
+Ngày Sinh Dương Lịch: ${day}/${month}/${fullYear} ${userData.birthtime}
+Nơi Sinh: ${userData.birthplace}
+
+**Lưu ý quan trọng:** Đây là một bài tập mô phỏng để học hỏi về tử vi học. Bạn hãy tạo một lá số tử vi hoàn chỉnh với dữ liệu mô phỏng dựa trên kiến thức tử vi của bạn. Không cần phải chính xác 100% về mặt tính toán, chỉ cần tạo ra một lá số hợp lý và đầy đủ.
+
+Hãy trả về CHÍNH XÁC theo định dạng sau, KHÔNG THÊM TEXT GIẢI THÍCH KHÁC:
+
+ho_ten: ${userData.name}
+gioi_tinh: ${userData.gender}
+duong_lich: ${day}/${month}/${fullYear} ${userData.birthtime}
+am_lich: [Tạo ngày âm lịch mô phỏng]
+noi_sinh: ${userData.birthplace}
+ban_menh: [Tạo bản mệnh mô phỏng]
+cuc: [Tạo cục mô phỏng]
+am_duong: ${userData.gender === 'Nam' ? 'Dương' : 'Âm'}
+chu_menh: [Tạo chủ mệnh mô phỏng]
+chu_than: [Tạo chủ thân mô phỏng]
+
+## MỆNH
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## PHỤ MẪU
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## PHÚC ĐỨC
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## ĐIỀN TRẠCH
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## QUAN LỘC
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## NÔ BỘC
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## THIÊN DI
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## TẬT ÁCH
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## TÀI BẠCH
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## TỬ TỨC
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## THÊ THIẾP
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## HUYNH ĐỆ
+dia_chi: [Tạo địa chi mô phỏng]
+chinh_tinh: [Tạo chính tinh mô phỏng]
+phu_tinh_tot: [Tạo phụ tinh tốt mô phỏng]
+phu_tinh_xau: [Tạo phụ tinh xấu mô phỏng]
+phu_tinh_trung_binh: [Tạo phụ tinh trung bình mô phỏng]
+vong_trang_sinh: [Tạo vòng tràng sinh mô phỏng]
+is_than: false
+
+## CHÚ GIẢI
+content: [Tạo nội dung giải thích mô phỏng về lá số tử vi này]`;
+
+            for (const model of GEMINI_MODELS) {
+                for (let i = 0; i < API_KEYS.length; i++) {
+                    try {
+                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEYS[i]}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: prompt }] }]
+                            })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                                const result = data.candidates[0].content.parts[0].text;
+                                
+                                if (validateMarkdownFormat(result)) {
+                                    currentKeyIndex = i;
+                                    console.log(`✅ Thành công với model ${model}, API Key ${i + 1}`);
+                                    return result;
+                                } else {
+                                    console.error(`❌ Định dạng không đúng từ ${model}, API Key ${i + 1}`);
+                                }
+                            }
+                        } else {
+                            console.log(`❌ ${model} key ${i + 1}: ${response.status}`);
+                        }
+                    } catch (error) {
+                        console.log(`❌ Lỗi ${model} key ${i + 1}: ${error.message}`);
+                    }
+                }
+            }
+            
+            throw new Error('Không thể tạo được dữ liệu đúng định dạng. Vui lòng thử lại.');
+        }
+
+        // Parse Markdown data
+        function parseMarkdownData(md) {
+            const data = { cung: {}, chu_giai: [] };
+            
+            const generalInfoLines = md.split('## ')[0].split('\n');
+            generalInfoLines.forEach(line => {
+                if (line.trim()) {
+                    const [key, ...valueParts] = line.split(':');
+                    if (key && key.trim()) {
+                        data[key.trim()] = valueParts.join(':').trim();
+                    }
+                }
+            });
+            
+            const cungSections = md.split('## ').slice(1);
+            cungSections.forEach(section => {
+                const lines = section.split('\n');
+                const titleLine = lines[0].trim();
+                
+                if (titleLine === 'CHÚ GIẢI') {
+                    const content = lines.slice(1).join('\n').trim();
+                    data.chu_giai = content;
+                } else {
+                    const cungData = {};
+                    lines.slice(1).forEach(line => {
+                        if (line.trim()) {
+                            const [key, ...valueParts] = line.split(':');
+                            if (key && key.trim()) {
+                                cungData[key.trim()] = valueParts.join(':').trim();
+                            }
+                        }
+                    });
+                    data.cung[titleLine] = cungData;
+                }
+            });
+            
+            return data;
+        }
+
+        // Display data
+        function displayData(data) {
+            const contentDiv = document.getElementById('content');
+            let html = `
+                <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h3>👤 Thông Tin Cá Nhân</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                        <div><strong>Họ và Tên:</strong> ${data.ho_ten || 'N/A'}</div>
+                        <div><strong>Giới Tính:</strong> ${data.gioi_tinh || 'N/A'}</div>
+                        <div><strong>Dương Lịch:</strong> ${data.duong_lich || 'N/A'}</div>
+                        <div><strong>Âm Lịch:</strong> ${data.am_lich || 'N/A'}</div>
+                        <div><strong>Nơi Sinh:</strong> ${data.noi_sinh || 'N/A'}</div>
+                        <div><strong>Bản Mệnh:</strong> ${data.ban_menh || 'N/A'}</div>
+                        <div><strong>Cục:</strong> ${data.cuc || 'N/A'}</div>
+                        <div><strong>Âm Dương:</strong> ${data.am_duong || 'N/A'}</div>
+                        <div><strong>Chủ Mệnh:</strong> ${data.chu_menh || 'N/A'}</div>
+                        <div><strong>Chủ Thân:</strong> ${data.chu_than || 'N/A'}</div>
+                    </div>
+                </div>
+            `;
+
+            html += '<div class="cung-grid">';
+            
+            const cungNames = {
+                'MỆNH': 'Mệnh',
+                'PHỤ MẪU': 'Phụ Mẫu',
+                'PHÚC ĐỨC': 'Phúc Đức',
+                'ĐIỀN TRẠCH': 'Điền Trạch',
+                'QUAN LỘC': 'Quan Lộc',
+                'NÔ BỘC': 'Nô Bộc',
+                'THIÊN DI': 'Thiên Di',
+                'TẬT ÁCH': 'Tật Ách',
+                'TÀI BẠCH': 'Tài Bạch',
+                'TỬ TỨC': 'Tử Tức',
+                'THÊ THIẾP': 'Thê Thiếp',
+                'HUYNH ĐỆ': 'Huynh Đệ'
+            };
+
+            Object.keys(cungNames).forEach(cungKey => {
+                const cungData = data.cung[cungKey];
+                if (cungData) {
+                    html += `
+                        <div class="cung-card">
+                            <div class="cung-title">${cungNames[cungKey]}</div>
+                            <div class="cung-info">
+                                <div><strong>Địa Chi:</strong> ${cungData.dia_chi || 'N/A'}</div>
+                                <div><strong>Chính Tinh:</strong> ${cungData.chinh_tinh || 'N/A'}</div>
+                                <div><strong>Phụ Tinh Tốt:</strong> ${cungData.phu_tinh_tot || 'N/A'}</div>
+                                <div><strong>Phụ Tinh Xấu:</strong> ${cungData.phu_tinh_xau || 'N/A'}</div>
+                                <div><strong>Phụ Tinh Trung Bình:</strong> ${cungData.phu_tinh_trung_binh || 'N/A'}</div>
+                                <div><strong>Vòng Tràng Sinh:</strong> ${cungData.vong_trang_sinh || 'N/A'}</div>
+                                <div><strong>Là Thân:</strong> ${cungData.is_than || 'N/A'}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            html += '</div>';
+
+            if (data.chu_giai && data.chu_giai.length > 0) {
+                html += `
+                    <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                        <h3>📝 Chú Giải</h3>
+                        <p>${data.chu_giai}</p>
+                    </div>
+                `;
+            }
+
+            contentDiv.innerHTML = html;
+            document.querySelector('.download-btn').style.display = 'inline-block';
+        }
+
+        // Download Markdown
+        function downloadMarkdown() {
+            if (!currentData) return;
+            
+            const timestamp = new Date().toLocaleString('vi-VN');
+            const header = `# LÁ SỐ TỬ VI - ${currentData.ho_ten || 'Không xác định'}
+
+**Ngày tạo:** ${timestamp}
+
+---
+
+`;
+            
+            const content = header + currentData.rawMarkdown;
+            const blob = new Blob([content], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `laso_tuvi_${Date.now()}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Generate mock data
+        function generateMockData() {
+            const userData = {
+                name: document.getElementById('user-name').value,
+                gender: document.getElementById('user-gender').value,
+                birthdate: document.getElementById('user-birthdate').value,
+                birthtime: document.getElementById('user-birthtime').value,
+                birthplace: document.getElementById('user-birthplace').value
+            };
+
+            const birthdateParts = userData.birthdate.split('/');
+            const day = birthdateParts[0];
+            const month = birthdateParts[1];
+            const year = birthdateParts[2];
+            const fullYear = year.length === 2 ? (parseInt(year) < 50 ? '20' + year : '19' + year) : year;
+
+            const mockData = `ho_ten: ${userData.name}
+gioi_tinh: ${userData.gender}
+duong_lich: ${day}/${month}/${fullYear} ${userData.birthtime}
+am_lich: 01/10/Canh Ngọ
+noi_sinh: ${userData.birthplace}
+ban_menh: Thổ - Lộ Bàng Thổ
+cuc: Thổ cục 5
+am_duong: ${userData.gender === 'Nam' ? 'Dương' : 'Âm'}
+chu_menh: Tử Vi
+chu_than: Thiên Cơ
+
+## MỆNH
+dia_chi: Ngọ
+chinh_tinh: Tử Vi (V)
+phu_tinh_tot: Thiên Khôi, Hoa Quyền
+phu_tinh_xau: Kình Dương
+phu_tinh_trung_binh: Tam Đài, Bát Tọa
+vong_trang_sinh: Quan Đới
+is_than: false
+
+## PHỤ MẪU
+dia_chi: Mùi
+chinh_tinh: Thiên Cơ (M)
+phu_tinh_tot: Văn Xương, Thiên Quý
+phu_tinh_xau: Đà La
+phu_tinh_trung_binh: Thiên Phúc, Thiên Quan
+vong_trang_sinh: Lâm Quan
+is_than: false
+
+## PHÚC ĐỨC
+dia_chi: Thân
+chinh_tinh: Thái Dương (Đ)
+phu_tinh_tot: Thiên Tướng
+phu_tinh_xau: Hỏa Tinh
+phu_tinh_trung_binh: Thiên Hình, Giải Thần
+vong_trang_sinh: Đế Vượng
+is_than: false
+
+## ĐIỀN TRẠCH
+dia_chi: Dậu
+chinh_tinh: Vũ Khúc (H)
+phu_tinh_tot: Văn Khúc, Thiên Phúc
+phu_tinh_xau: Linh Tinh
+phu_tinh_trung_binh: Thiên Không, Địa Kiếp
+vong_trang_sinh: Suy
+is_than: false
+
+## QUAN LỘC
+dia_chi: Tuất
+chinh_tinh: Thiên Đồng (V)
+phu_tinh_tot: Tả Phụ, Hữu Bật
+phu_tinh_xau: Tuần Không
+phu_tinh_trung_binh: Thiên Mã, Địa Kiếp
+vong_trang_sinh: Bệnh
+is_than: false
+
+## NÔ BỘC
+dia_chi: Hợi
+chinh_tinh: Liêm Trinh (M)
+phu_tinh_tot: Thiên Quan, Phước Đức
+phu_tinh_xau: Bác Sĩ
+phu_tinh_trung_binh: Thiên Lương, Thiên Tài
+vong_trang_sinh: Tử
+is_than: false
+
+## THIÊN DI
+dia_chi: Tý
+chinh_tinh: Tham Lang (Đ)
+phu_tinh_tot: Thiên Hư, Thiên Quý
+phu_tinh_xau: Thiên Hình
+phu_tinh_trung_binh: Thiên Không, Địa Kiếp
+vong_trang_sinh: Mộ
+is_than: false
+
+## TẬT ÁCH
+dia_chi: Sửu
+chinh_tinh: Cự Môn (V)
+phu_tinh_tot: Thiên Tướng, Thiên Quý
+phu_tinh_xau: Thiên Hình
+phu_tinh_trung_binh: Thiên Không, Địa Kiếp
+vong_trang_sinh: Tuyệt
+is_than: false
+
+## TÀI BẠCH
+dia_chi: Dần
+chinh_tinh: Thiên Tướng (M)
+phu_tinh_tot: Thiên Quan, Phước Đức
+phu_tinh_xau: Bác Sĩ
+phu_tinh_trung_binh: Thiên Lương, Thiên Tài
+vong_trang_sinh: Thai
+is_than: false
+
+## TỬ TỨC
+dia_chi: Mão
+chinh_tinh: Thiên Lương (Đ)
+phu_tinh_tot: Thiên Hư, Thiên Quý
+phu_tinh_xau: Thiên Hình
+phu_tinh_trung_binh: Thiên Không, Địa Kiếp
+vong_trang_sinh: Dưỡng
+is_than: false
+
+## THÊ THIẾP
+dia_chi: Thìn
+chinh_tinh: Thất Sát (V)
+phu_tinh_tot: Thiên Tướng, Thiên Quý
+phu_tinh_xau: Thiên Hình
+phu_tinh_trung_binh: Thiên Không, Địa Kiếp
+vong_trang_sinh: Trường Sinh
+is_than: false
+
+## HUYNH ĐỆ
+dia_chi: Tỵ
+chinh_tinh: Phá Quân (M)
+phu_tinh_tot: Thiên Quan, Phước Đức
+phu_tinh_xau: Bác Sĩ
+phu_tinh_trung_binh: Thiên Lương, Thiên Tài
+vong_trang_sinh: Mộc Dục
+is_than: false
+
+## CHÚ GIẢI
+content: Đây là lá số tử vi mô phỏng cho ${userData.name}, sinh ngày ${day}/${month}/${fullYear} ${userData.birthtime} tại ${userData.birthplace}. Lá số này được tạo ra để học hỏi và nghiên cứu về tử vi học Việt Nam.`;
+
+            currentData = {
+                rawMarkdown: mockData,
+                ...parseMarkdownData(mockData)
+            };
+
+            document.getElementById('result').classList.add('show');
+            document.getElementById('loading').style.display = 'none';
+            displayData(currentData);
+            showMessage('✅ Đã tạo dữ liệu giả thành công!', 'success');
+        }
+
+        // Test API
+        async function testAPI() {
+            showMessage('🧪 Đang test API...', 'info');
+            
+            for (const model of GEMINI_MODELS) {
+                for (let i = 0; i < API_KEYS.length; i++) {
+                    try {
+                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEYS[i]}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: 'Xin chào, hãy trả lời "OK" nếu bạn hoạt động bình thường.' }] }]
+                            })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                                const result = data.candidates[0].content.parts[0].text;
+                                showMessage(`✅ API hoạt động bình thường với model ${model}!`, 'success');
+                                return;
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`❌ Lỗi ${model} key ${i + 1}: ${error.message}`);
+                    }
+                }
+            }
+            
+            showMessage('❌ Không thể kết nối với API. Vui lòng kiểm tra kết nối mạng và API key.', 'error');
+        }
+
+        // Form submit
+        document.getElementById('lasoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userData = {
+                name: document.getElementById('user-name').value,
+                gender: document.getElementById('user-gender').value,
+                birthdate: document.getElementById('user-birthdate').value,
+                birthtime: document.getElementById('user-birthtime').value,
+                birthplace: document.getElementById('user-birthplace').value
+            };
+
+            if (!validateDateFormat(userData.birthdate)) {
+                showMessage('❌ Định dạng ngày sinh không đúng. Vui lòng sử dụng dd/mm/yy', 'error');
+                return;
+            }
+
+            document.getElementById('result').classList.add('show');
+            document.getElementById('loading').style.display = 'block';
+            document.querySelector('.download-btn').style.display = 'none';
+
+            try {
+                const result = await generateLaso(userData);
+                currentData = {
+                    rawMarkdown: result,
+                    ...parseMarkdownData(result)
+                };
+                
+                document.getElementById('loading').style.display = 'none';
+                displayData(currentData);
+                showMessage('✅ Đã tạo lá số tử vi thành công!', 'success');
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                showMessage(`❌ Lỗi: ${error.message}`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

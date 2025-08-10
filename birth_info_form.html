@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Tin Sinh - Tử Vi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #b8b8b8;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .datetime-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .gender-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .gender-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .gender-option input[type="radio"] {
+            display: none;
+        }
+
+        .gender-option label {
+            display: block;
+            padding: 15px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+        }
+
+        .gender-option input[type="radio"]:checked + label {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .mystical-decoration {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        .mystical-decoration:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+
+        .mystical-decoration:nth-child(2) {
+            bottom: 10%;
+            right: 10%;
+            border-color: rgba(78, 205, 196, 0.3);
+            animation-direction: reverse;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .floating-symbols {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255, 215, 0, 0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-symbols:nth-child(1) { top: 20%; left: 5%; animation-delay: 0s; }
+        .floating-symbols:nth-child(2) { top: 60%; right: 5%; animation-delay: 2s; }
+        .floating-symbols:nth-child(3) { bottom: 30%; left: 15%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .datetime-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .gender-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background stars -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- Mystical decorations -->
+    <div class="mystical-decoration"></div>
+    <div class="mystical-decoration"></div>
+    
+    <!-- Floating symbols -->
+    <div class="floating-symbols">☯</div>
+    <div class="floating-symbols">☸</div>
+    <div class="floating-symbols">⚛</div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Tử Vi</h1>
+            <p class="subtitle">Nhập thông tin sinh để xem vận mệnh</p>
+        </div>
+
+        <form class="form-container" id="birthForm">
+            <div class="form-group">
+                <label class="form-label">Họ và tên</label>
+                <input type="text" class="form-input" id="fullName" placeholder="Nhập họ và tên đầy đủ" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Ngày sinh</label>
+                <input type="date" class="form-input" id="birthDate" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Giờ sinh</label>
+                <input type="time" class="form-input" id="birthTime" required>
+            </div>
+
+                               <div class="form-group">
+                       <label class="form-label">Nơi sinh</label>
+                       <input type="text" class="form-input" id="birthplace" placeholder="Nhập nơi sinh (tỉnh/thành phố)" required>
+                   </div>
+
+                   <div class="form-group">
+                       <label class="form-label">Giới tính</label>
+                       <div class="gender-group">
+                           <div class="gender-option">
+                               <input type="radio" id="male" name="gender" value="Nam" required>
+                               <label for="male">Nam</label>
+                           </div>
+                           <div class="gender-option">
+                               <input type="radio" id="female" name="gender" value="Nữ">
+                               <label for="female">Nữ</label>
+                           </div>
+                       </div>
+                   </div>
+
+            <button type="submit" class="submit-btn">
+                ✨ Xem Tử Vi ✨
+            </button>
+        </form>
+        </div>
+
+    <!-- Load theo thứ tự: Model Manager -> API Key Manager -> TuVi Service -> TuVi Processor -->
+    <script src="modelManager.js?v=1.4"></script>
+    <script src="apiKeyManager.js?v=1.4"></script>
+    <script src="tuviGeminiService.js?v=1.4"></script>
+    <script src="tuvi_processor.js?v=1.4"></script>
+           <script>
+               // Tạo ngôi sao lấp lánh
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Khởi tạo TuViProcessor
+        let tuViProcessor = null;
+
+        // Kiểm tra dependencies trước khi xử lý form
+        function checkDependencies() {
+            if (!window.modelManager) {
+                throw new Error('ModelManager chưa được load');
+            }
+            if (!window.apiKeyManager) {
+                throw new Error('ApiKeyManager chưa được load');
+            }
+            if (typeof window.TuViGeminiService === 'undefined') {
+                throw new Error('TuViGeminiService chưa được load');
+            }
+            if (typeof window.TuViProcessor === 'undefined') {
+                throw new Error('TuViProcessor chưa được load');
+            }
+            
+            // Kiểm tra method callAPIWithRetry
+            if (typeof window.modelManager.callAPIWithRetry !== 'function') {
+                throw new Error('ModelManager.callAPIWithRetry method không tồn tại');
+            }
+            
+            return true;
+        }
+
+        // Xử lý form submit - SỬ DỤNG TuViProcessor middleware
+        document.getElementById('birthForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Thu thập dữ liệu form
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                gender: document.querySelector('input[name="gender"]:checked').value,
+                birthDate: document.getElementById('birthDate').value,
+                birthTime: document.getElementById('birthTime').value,
+                birthplace: document.getElementById('birthplace').value
+            };
+            
+            // Hiển thị loading
+            showLoading(true);
+            hideResult();
+            hideError();
+            
+            try {
+                // Kiểm tra dependencies trước
+                checkDependencies();
+                
+                // Khởi tạo TuViProcessor nếu chưa có
+                if (!tuViProcessor) {
+                    tuViProcessor = new TuViProcessor();
+                }
+                
+                // Gọi middleware xử lý - TẤT CẢ LOGIC Ở ĐÂY
+                const result = await tuViProcessor.processBirthInfo(formData);
+                
+                if (result.success) {
+                    showResult(`✅ ${result.message}`);
+                    // Chuyển hướng đến trang kết quả sau 2 giây
+                    setTimeout(() => {
+                        window.location.href = 'lasotuvi.html';
+                    }, 2000);
+                } else {
+                    showError(`❌ ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Lỗi xử lý form:', error);
+                showError(`❌ Lỗi hệ thống: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        // Khởi tạo ngôi sao khi trang load
+        window.addEventListener('load', createStars);
+
+        // Thêm hiệu ứng hover cho các input
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Các hàm UI helper
+        function showLoading(show) {
+            const submitBtn = document.querySelector('.submit-btn');
+            if (show) {
+                submitBtn.textContent = '⏳ Đang xử lý...';
+                submitBtn.disabled = true;
+            } else {
+                submitBtn.textContent = '✨ Xem Tử Vi ✨';
+                submitBtn.disabled = false;
+            }
+        }
+
+        function showResult(message) {
+            hideError();
+            const resultDiv = document.getElementById('result') || createResultElement();
+            resultDiv.textContent = message;
+            resultDiv.style.display = 'block';
+        }
+
+        function showError(message) {
+            hideResult();
+            const errorDiv = document.getElementById('error') || createErrorElement();
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideResult() {
+            const resultDiv = document.getElementById('result');
+            if (resultDiv) resultDiv.style.display = 'none';
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('error');
+            if (errorDiv) errorDiv.style.display = 'none';
+        }
+
+        function createResultElement() {
+            const div = document.createElement('div');
+            div.id = 'result';
+            div.style.cssText = `
+                background: rgba(0, 255, 0, 0.1);
+                border: 1px solid #00ff00;
+                color: #00ff00;
+                padding: 15px;
+                border-radius: 10px;
+                margin-top: 20px;
+                text-align: center;
+                display: none;
+            `;
+            document.querySelector('.form-container').appendChild(div);
+            return div;
+        }
+
+        function createErrorElement() {
+            const div = document.createElement('div');
+            div.id = 'error';
+            div.style.cssText = `
+                background: rgba(255, 0, 0, 0.1);
+                border: 1px solid #ff0000;
+                color: #ff0000;
+                padding: 15px;
+                border-radius: 10px;
+                margin-top: 20px;
+                text-align: center;
+                display: none;
+            `;
+            document.querySelector('.form-container').appendChild(div);
+            return div;
+        }
+    </script>
+</body>
+</html>

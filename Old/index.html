@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lá Số Tử Vi - Ứng Dụng Chính</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-yellow-300 mb-4" style="text-shadow: 0 0 20px #fef08a;">
+                🎯 LÁ SỐ TỬ VI AI
+            </h1>
+            <p class="text-xl text-gray-300">Ứng dụng tạo lá số tử vi bằng trí tuệ nhân tạo Gemini Pro</p>
+        </header>
+
+        <!-- Form nhập thông tin -->
+        <form id="birth-info-form" class="form-container mb-8">
+            <h2 class="text-2xl font-bold text-yellow-300 mb-6 text-center">📝 Nhập Thông Tin Cá Nhân</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="user-name" class="block text-sm font-medium text-gray-300 mb-2">Họ và tên</label>
+                    <input type="text" id="user-name" name="user-name" class="form-input" required placeholder="Nhập họ tên đầy đủ">
+                </div>
+                
+                <div>
+                    <label for="user-gender" class="block text-sm font-medium text-gray-300 mb-2">Giới tính</label>
+                    <select id="user-gender" name="user-gender" class="form-input" required>
+                        <option value="">Chọn giới tính</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="user-birthdate" class="block text-sm font-medium text-gray-300 mb-2">Ngày sinh (dd/mm/yy)</label>
+                    <input type="text" id="user-birthdate" name="user-birthdate" class="form-input" required placeholder="Ví dụ: 19/11/90">
+                </div>
+                
+                <div>
+                    <label for="user-birthtime" class="block text-sm font-medium text-gray-300 mb-2">Giờ sinh</label>
+                    <select id="user-birthtime" name="user-birthtime" class="form-input" required>
+                        <option value="">Chọn giờ sinh</option>
+                        <option value="Tý (23:00-01:00)">Tý (23:00-01:00)</option>
+                        <option value="Sửu (01:00-03:00)">Sửu (01:00-03:00)</option>
+                        <option value="Dần (03:00-05:00)">Dần (03:00-05:00)</option>
+                        <option value="Mão (05:00-07:00)">Mão (05:00-07:00)</option>
+                        <option value="Thìn (07:00-09:00)">Thìn (07:00-09:00)</option>
+                        <option value="Tỵ (09:00-11:00)">Tỵ (09:00-11:00)</option>
+                        <option value="Ngọ (11:00-13:00)">Ngọ (11:00-13:00)</option>
+                        <option value="Mùi (13:00-15:00)">Mùi (13:00-15:00)</option>
+                        <option value="Thân (15:00-17:00)">Thân (15:00-17:00)</option>
+                        <option value="Dậu (17:00-19:00)">Dậu (17:00-19:00)</option>
+                        <option value="Tuất (19:00-21:00)">Tuất (19:00-21:00)</option>
+                        <option value="Hợi (21:00-23:00)">Hợi (21:00-23:00)</option>
+                    </select>
+                </div>
+                
+                <div class="md:col-span-2">
+                    <label for="user-birthplace" class="block text-sm font-medium text-gray-300 mb-2">Nơi sinh</label>
+                    <input type="text" id="user-birthplace" name="user-birthplace" class="form-input" required placeholder="Nhập tỉnh/thành phố nơi sinh">
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-4 justify-center mt-8">
+                <button type="submit" id="submit-btn" class="btn-primary">
+                    🎯 Tạo Lá Số Tử Vi
+                </button>
+                
+                <button type="button" id="load-saved-data-btn" class="btn-secondary">
+                    📂 Tải Dữ Liệu Đã Lưu
+                </button>
+                
+                <button type="button" id="load-sample-data-btn" class="btn-secondary">
+                    📋 Tải Dữ Liệu Mẫu
+                </button>
+                
+                <button type="button" id="test-api-btn" class="btn-secondary">
+                    🔧 Test API
+                </button>
+            </div>
+        </form>
+
+        <!-- Container hiển thị lá số tử vi -->
+        <div id="laso-container" class="hidden">
+            <!-- Nút điều khiển -->
+            <div class="flex flex-wrap gap-4 justify-center mb-6">
+                <button id="back-to-form-btn" class="btn-secondary">
+                    ← Quay Lại Form
+                </button>
+                
+                <button id="save-data-btn" class="btn-primary">
+                    💾 Lưu Dữ Liệu
+                </button>
+                
+                <button id="download-md-btn" class="btn-secondary">
+                    📄 Tải Xuống Markdown
+                </button>
+            </div>
+
+            <!-- Thông tin trung tâm -->
+            <div id="info-trung-tam" class="info-trung-tam text-center mb-8">
+                <h1 class="text-3xl font-bold text-yellow-300 tracking-wider" style="text-shadow: 0 0 10px #fef08a;">LÁ SỐ TỬ VI</h1>
+                <h2 class="text-2xl mt-2">Chưa có dữ liệu</h2>
+            </div>
+
+            <!-- Lưới 12 cung -->
+            <div class="cung-container mb-8">
+                <!-- Cung Tý -->
+                <div id="cung-ty" class="cung">
+                    <div class="dia-chi-glyph">Tý</div>
+                    <div class="ten-cung-chuc-nang">TÝ</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Tý</div>
+                </div>
+                
+                <!-- Cung Sửu -->
+                <div id="cung-suu" class="cung">
+                    <div class="dia-chi-glyph">Sửu</div>
+                    <div class="ten-cung-chuc-nang">SỬU</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Sửu</div>
+                </div>
+                
+                <!-- Cung Dần -->
+                <div id="cung-dan" class="cung">
+                    <div class="dia-chi-glyph">Dần</div>
+                    <div class="ten-cung-chuc-nang">DẦN</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Dần</div>
+                </div>
+                
+                <!-- Cung Mão -->
+                <div id="cung-mao" class="cung">
+                    <div class="dia-chi-glyph">Mão</div>
+                    <div class="ten-cung-chuc-nang">MÃO</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Mão</div>
+                </div>
+                
+                <!-- Cung Thìn -->
+                <div id="cung-thin" class="cung">
+                    <div class="dia-chi-glyph">Thìn</div>
+                    <div class="ten-cung-chuc-nang">THÌN</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Thìn</div>
+                </div>
+                
+                <!-- Cung Tỵ -->
+                <div id="cung-ty" class="cung">
+                    <div class="dia-chi-glyph">Tỵ</div>
+                    <div class="ten-cung-chuc-nang">TỴ</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Tỵ</div>
+                </div>
+                
+                <!-- Cung Ngọ -->
+                <div id="cung-ngo" class="cung">
+                    <div class="dia-chi-glyph">Ngọ</div>
+                    <div class="ten-cung-chuc-nang">NGỌ</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Ngọ</div>
+                </div>
+                
+                <!-- Cung Mùi -->
+                <div id="cung-mui" class="cung">
+                    <div class="dia-chi-glyph">Mùi</div>
+                    <div class="ten-cung-chuc-nang">MÙI</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Mùi</div>
+                </div>
+                
+                <!-- Cung Thân -->
+                <div id="cung-than" class="cung">
+                    <div class="dia-chi-glyph">Thân</div>
+                    <div class="ten-cung-chuc-nang">THÂN</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Thân</div>
+                </div>
+                
+                <!-- Cung Dậu -->
+                <div id="cung-dau" class="cung">
+                    <div class="dia-chi-glyph">Dậu</div>
+                    <div class="ten-cung-chuc-nang">DẬU</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Dậu</div>
+                </div>
+                
+                <!-- Cung Tuất -->
+                <div id="cung-tuat" class="cung">
+                    <div class="dia-chi-glyph">Tuất</div>
+                    <div class="ten-cung-chuc-nang">TUẤT</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Tuất</div>
+                </div>
+                
+                <!-- Cung Hợi -->
+                <div id="cung-hoi" class="cung">
+                    <div class="dia-chi-glyph">Hợi</div>
+                    <div class="ten-cung-chuc-nang">HỢI</div>
+                    <div class="chinh-tinh"></div>
+                    <div class="phu-tinh-grid"></div>
+                    <div class="vong-trang-sinh"></div>
+                    <div class="ten-cung-dia-ban">Hợi</div>
+                </div>
+            </div>
+
+            <!-- Phần chú giải -->
+            <div id="chu-giai-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Chú giải sẽ được tạo động -->
+            </div>
+        </div>
+
+        <!-- Thông báo -->
+        <div id="message-container" class="fixed top-4 right-4 z-50"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/userDataService.js"></script>
+    <script src="js/llmService.js"></script>
+    <script src="js/uiService.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
