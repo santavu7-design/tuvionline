@@ -585,6 +585,13 @@
         }
         // Hiển thị nội dung tử vi
         function displayTuViContent(data) {
+            console.log('Dữ liệu nhận được trong displayTuViContent:', data);
+            
+            // Helper function để lấy giá trị từ data với fallback
+            const getValue = (key, fallback = 'N/A') => {
+                return data[key] || data[key.toLowerCase()] || fallback;
+            };
+            
             // Hiển thị thông tin cơ bản
             document.getElementById('basic-info').innerHTML = `
                 <div class="info-section">
@@ -592,35 +599,35 @@
                     <div class="info-grid">
                         <div class="info-item">
                             <span class="label">Họ tên:</span>
-                            <span class="value">${data.hoTen || 'N/A'}</span>
+                            <span class="value">${getValue('hoTen')}</span>
                         </div>
                         <div class="info-item">
                             <span class="label">Giới tính:</span>
-                            <span class="value">${data.gioiTinh || 'N/A'}</span>
+                            <span class="value">${getValue('gioiTinh')}</span>
                         </div>
                         <div class="info-item">
                             <span class="label">Ngày sinh dương lịch:</span>
-                            <span class="value">${data.duongLich || 'N/A'}</span>
+                            <span class="value">${getValue('duongLich')}</span>
                         </div>
                         <div class="info-item">
                             <span class="label">Ngày sinh âm lịch:</span>
-                            <span class="value">${data.amLich || 'N/A'}</span>
+                            <span class="value">${getValue('amLich')}</span>
                         </div>
                         <div class="info-item">
                             <span class="label">Nơi sinh:</span>
-                            <span class="value">${data.noiSinh || 'N/A'}</span>
+                            <span class="value">${getValue('noiSinh')}</span>
                         </div>
                         <div class="info-item">
                             <span class="label">Bản mệnh:</span>
-                            <span class="value">${data.banMenh || 'N/A'}</span>
+                            <span class="value">${getValue('banMenh')}</span>
                         </div>
                         <div class="info-item">
                             <span class="label">Cục:</span>
-                            <span class="value">${data.cuc || 'N/A'}</span>
+                            <span class="value">${getValue('cuc')}</span>
                         </div>
                         <div class="info-item">
                             <span class="label">Âm dương:</span>
-                            <span class="value">${data.amDuong || 'N/A'}</span>
+                            <span class="value">${getValue('amDuong')}</span>
                         </div>
                     </div>
                 </div>
@@ -639,37 +646,42 @@
             palaceNames.forEach((palaceName) => {
                 const palaceData = data.cungTuVi && data.cungTuVi[palaceName] ? data.cungTuVi[palaceName] : {};
                 
+                // Helper function cho palace data
+                const getPalaceValue = (key, fallback = 'N/A') => {
+                    return palaceData[key] || palaceData[key.toLowerCase()] || fallback;
+                };
+                
                 const palaceBox = document.createElement('div');
                 palaceBox.className = 'palace-box';
                 palaceBox.innerHTML = `
                     <div class="palace-box-header">
                         <div class="palace-box-title">${palaceName}</div>
-                        <div class="palace-box-dia-chi">${palaceData.diaChi || 'N/A'}</div>
+                        <div class="palace-box-dia-chi">${getPalaceValue('diaChi')}</div>
                     </div>
                     <div class="palace-box-content">
                         <div class="palace-box-item">
                             <div class="label">Chính tinh:</div>
-                            <div class="value">${palaceData.chinhTinh || 'N/A'}</div>
+                            <div class="value">${getPalaceValue('chinhTinh')}</div>
                         </div>
                         <div class="palace-box-item">
                             <div class="label">Phụ tinh tốt:</div>
-                            <div class="value">${palaceData.phuTinhTot || 'N/A'}</div>
+                            <div class="value">${getPalaceValue('phuTinhTot')}</div>
                         </div>
                         <div class="palace-box-item">
                             <div class="label">Phụ tinh xấu:</div>
-                            <div class="value">${palaceData.phuTinhXau || 'N/A'}</div>
+                            <div class="value">${getPalaceValue('phuTinhXau')}</div>
                         </div>
                         <div class="palace-box-item">
                             <div class="label">Phụ tinh trung bình:</div>
-                            <div class="value">${palaceData.phuTinhTrungBinh || 'N/A'}</div>
+                            <div class="value">${getPalaceValue('phuTinhTrungBinh')}</div>
                         </div>
                         <div class="palace-box-item">
                             <div class="label">Vòng tràng sinh:</div>
-                            <div class="value">${palaceData.vongTrangSinh || 'N/A'}</div>
+                            <div class="value">${getPalaceValue('vongTrangSinh')}</div>
                         </div>
                         <div class="palace-box-item">
                             <div class="label">Thân:</div>
-                            <div class="value ${palaceData.than ? 'than-yes' : 'than-no'}">${palaceData.than ? 'Có' : 'Không'}</div>
+                            <div class="value ${getPalaceValue('than') ? 'than-yes' : 'than-no'}">${getPalaceValue('than') ? 'Có' : 'Không'}</div>
                         </div>
                     </div>
                 `;
@@ -713,21 +725,26 @@
                 if (palaceElement) {
                     const cungData = data.cungTuVi[palaceKey] || {};
                     
+                    // Helper function cho palace data
+                    const getPalaceValue = (key, fallback = 'N/A') => {
+                        return cungData[key] || cungData[key.toLowerCase()] || fallback;
+                    };
+                    
                     // Cập nhật địa chi
                     const diaChiElement = palaceElement.querySelector('.palace-dia-chi');
                     if (diaChiElement) {
-                        diaChiElement.textContent = cungData.diaChi || 'N/A';
+                        diaChiElement.textContent = getPalaceValue('diaChi');
                     }
                     
                     // Cập nhật sao chính
                     const starsElement = palaceElement.querySelector('.palace-stars');
                     if (starsElement) {
-                        const mainStars = cungData.chinhTinh || 'N/A';
+                        const mainStars = getPalaceValue('chinhTinh');
                         starsElement.innerHTML = mainStars.replace(/, /g, '<br>');
                     }
                     
                     // Đánh dấu cung có Thân
-                    if (cungData.than) {
+                    if (getPalaceValue('than')) {
                         palaceElement.classList.add('active');
                     } else {
                         palaceElement.classList.remove('active');
@@ -815,26 +832,123 @@
             
             // Dữ liệu mẫu hardcode để test
             return {
-                thongTinCoBan: {
-                    hoTen: "Nguyễn Văn A",
-                    ngaySinh: "15/01/1990",
-                    gioSinh: "14:30",
-                    noiSinh: "Hà Nội",
-                    gioiTinh: "Nam"
-                },
+                hoTen: "Nguyễn Văn A",
+                gioiTinh: "Nam",
+                duongLich: "15/01/1990",
+                amLich: "19/12/1989",
+                noiSinh: "Hà Nội",
+                banMenh: "Kim",
+                cuc: "Thủy Nhị Cục",
+                amDuong: "Dương",
                 cungTuVi: {
-                    cungTy: { diaChi: "Tý", chinhTinh: "Thiên Cơ, Thái Dương", than: false },
-                    cungSuu: { diaChi: "Sửu", chinhTinh: "Thiên Đồng, Thái Âm", than: false },
-                    cungDan: { diaChi: "Dần", chinhTinh: "Thiên Phủ, Thái Dương", than: false },
-                    cungMao: { diaChi: "Mão", chinhTinh: "Thiên Cơ, Thái Âm", than: false },
-                    cungThin: { diaChi: "Thìn", chinhTinh: "Thiên Đồng, Thái Dương", than: false },
-                    cungTy2: { diaChi: "Tỵ", chinhTinh: "Thiên Phủ, Thái Âm", than: false },
-                    cungNgo: { diaChi: "Ngọ", chinhTinh: "Thiên Cơ, Thái Dương", than: false },
-                    cungMui: { diaChi: "Mùi", chinhTinh: "Thiên Đồng, Thái Âm", than: false },
-                    cungThan: { diaChi: "Thân", chinhTinh: "Thiên Phủ, Thái Dương", than: true },
-                    cungDau: { diaChi: "Dậu", chinhTinh: "Thiên Cơ, Thái Âm", than: false },
-                    cungTuat: { diaChi: "Tuất", chinhTinh: "Thiên Đồng, Thái Dương", than: false },
-                    cungHoi: { diaChi: "Hợi", chinhTinh: "Thiên Phủ, Thái Âm", than: false }
+                    'MỆNH': { 
+                        diaChi: "Tý", 
+                        chinhTinh: "Thiên Cơ, Thái Dương", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Trường Sinh",
+                        than: false 
+                    },
+                    'PHỤ MẪU': { 
+                        diaChi: "Sửu", 
+                        chinhTinh: "Thiên Đồng, Thái Âm", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Mộc Dục",
+                        than: false 
+                    },
+                    'PHÚC ĐỨC': { 
+                        diaChi: "Dần", 
+                        chinhTinh: "Thiên Lương, Thất Sát", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Quan Đới",
+                        than: false 
+                    },
+                    'ĐIỀN TRẠCH': { 
+                        diaChi: "Mão", 
+                        chinhTinh: "Thiên Tướng, Tham Lang", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Lâm Quan",
+                        than: false 
+                    },
+                    'QUAN LỘC': { 
+                        diaChi: "Thìn", 
+                        chinhTinh: "Thiên Phủ, Vũ Khúc", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Đế Vượng",
+                        than: false 
+                    },
+                    'NÔ BỘC': { 
+                        diaChi: "Tỵ", 
+                        chinhTinh: "Thiên Tướng, Tham Lang", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Suy",
+                        than: false 
+                    },
+                    'THIÊN DI': { 
+                        diaChi: "Ngọ", 
+                        chinhTinh: "Thiên Cơ, Thái Âm", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Bệnh",
+                        than: false 
+                    },
+                    'TẬT ÁCH': { 
+                        diaChi: "Mùi", 
+                        chinhTinh: "Thiên Đồng, Thái Dương", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Tử",
+                        than: false 
+                    },
+                    'TÀI BẠCH': { 
+                        diaChi: "Thân", 
+                        chinhTinh: "Thiên Lương, Thất Sát", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Mộ",
+                        than: true 
+                    },
+                    'TỬ TỨC': { 
+                        diaChi: "Dậu", 
+                        chinhTinh: "Thiên Tướng, Tham Lang", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Tuyệt",
+                        than: false 
+                    },
+                    'THÊ THIẾP': { 
+                        diaChi: "Tuất", 
+                        chinhTinh: "Thiên Phủ, Vũ Khúc", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Thai",
+                        than: false 
+                    },
+                    'HUYNH ĐỆ': { 
+                        diaChi: "Hợi", 
+                        chinhTinh: "Thiên Cơ, Thái Âm", 
+                        phuTinhTot: "Thiên Khôi, Thiên Việt",
+                        phuTinhXau: "Kình Dương, Đà La",
+                        phuTinhTrungBinh: "Văn Xương, Văn Khúc",
+                        vongTrangSinh: "Dưỡng",
+                        than: false 
+                    }
                 },
                 giaiThichChung: "Đây là dữ liệu mẫu để test giao diện. Vui lòng nhập thông tin sinh thật để có kết quả chính xác."
             };
